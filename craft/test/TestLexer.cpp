@@ -1,10 +1,11 @@
-#include "SimpleLexer.hpp"
+#include "SimpleCalculator.hpp"
 #include <iostream>
 using namespace std;
 
 int main()
 {
-    SimpleLexer testcase;
-    testcase.tokenize("int a = 4");
-    testcase.tmp_printtokens();
+    SimpleCalculator test;
+    test.parse(" 2+5*4");
+    test.print();
+    cout << ">" << endl;
 }

@@ -32,7 +32,7 @@ private:
     };
 
 public:
-    void tokenize(string code);
+    vector<Token> &tokenize(string code);
     DfaState initToken(char ch);
     void tmp_printtokens()
     {

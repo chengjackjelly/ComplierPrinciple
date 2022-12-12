@@ -28,8 +28,9 @@ namespace Tokens
 
         Identifier, // 标识符 16
 
-        IntLiteral,   // 整型字面量 17
-        StringLiteral // 字符串字面量 18
+        IntLiteral,    // 整型字面量 17
+        StringLiteral, // 字符串字面量 18
+        Undefined,     // 19
     };
 }
 #endif
