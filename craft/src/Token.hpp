@@ -12,6 +12,10 @@ private:
     string text;
 
 public:
+    Token()
+    {
+        type = TokenType::Undefined;
+    }
     TokenType getType();
     string getText();
     void setText(string text_);

@@ -84,14 +84,14 @@ SimpleLexer::DfaState SimpleLexer::initToken(char ch)
     }
     else if (ch == '-')
     {
-        newState = DfaState::Plus;
-        token.setType(TokenType::Plus);
+        newState = DfaState::Minus;
+        token.setType(TokenType::Minus);
         tokentext += ch;
     }
     else if (ch == '*')
     {
-        newState = DfaState::Plus;
-        token.setType(TokenType::Plus);
+        newState = DfaState::Star;
+        token.setType(TokenType::Star);
         tokentext += ch;
     }
     else if (ch == '/')
@@ -117,7 +117,7 @@ SimpleLexer::DfaState SimpleLexer::initToken(char ch)
     }
     return newState;
 }
-void SimpleLexer::tokenize(string code)
+vector<Token> &SimpleLexer::tokenize(string code)
 {
     DfaState state = DfaState::Initial;
     StringBuffer reader(code);
@@ -216,4 +216,5 @@ void SimpleLexer::tokenize(string code)
     {
         initToken(ch);
     }
+    return tokens;
 }
