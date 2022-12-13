@@ -16,5 +16,6 @@ enum DfaState
     Slash,
     SemiColon,
     Assignment,
+
 };
 #endif

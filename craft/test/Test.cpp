@@ -5,7 +5,5 @@ using namespace std;
 int main()
 {
     SimpleCalculator test;
-    test.parse(" 2+5*4");
-    test.print();
-    cout << ">" << endl;
+    test.calculate("2+3*4");
 }

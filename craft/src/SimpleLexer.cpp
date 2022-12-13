@@ -106,6 +106,18 @@ SimpleLexer::DfaState SimpleLexer::initToken(char ch)
         token.setType(TokenType::Assignment);
         tokentext += ch;
     }
+    else if (ch == '(')
+    {
+        newState = DfaState::LeftParen;
+        token.setType(TokenType::LeftParen);
+        tokentext += ch;
+    }
+    else if (ch == ')')
+    {
+        newState = DfaState::RightParen;
+        token.setType(TokenType::RightParen);
+        tokentext += ch;
+    }
     else if (isBlank(ch))
     {
         newState = DfaState::Initial;
@@ -169,6 +181,8 @@ vector<Token> &SimpleLexer::tokenize(string code)
         case Minus:
         case Star:
         case Assignment:
+        case LeftParen:
+        case RightParen:
         case Slash:
             state = initToken(ch);
             break;

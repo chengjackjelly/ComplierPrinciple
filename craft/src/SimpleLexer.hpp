@@ -29,6 +29,8 @@ private:
         Slash,
         SemiColon,
         Assignment,
+        LeftParen,
+        RightParen,
     };
 
 public:

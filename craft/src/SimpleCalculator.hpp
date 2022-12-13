@@ -25,5 +25,5 @@ public:
     void calculate(string code); // program entrance
     void parse(string code);     // build AST
     void print();                // print AST
-    void evaluate();             // evaluate AST
+    int evaluate(ASTNode *node); // evaluate AST
 };
