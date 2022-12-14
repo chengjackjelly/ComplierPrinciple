@@ -1,9 +1,11 @@
-#include "SimpleCalculator.hpp"
+#include "SimpleParser.hpp"
 #include <iostream>
 using namespace std;
 
 int main()
 {
-    SimpleCalculator test;
-    test.calculate("2+3*4");
+    SimpleParser test;
+    test.parse("1*5+2*3;");
+    test.print();
+    cout << ">" << endl;
 }

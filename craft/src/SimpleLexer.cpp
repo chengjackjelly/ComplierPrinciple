@@ -122,6 +122,12 @@ SimpleLexer::DfaState SimpleLexer::initToken(char ch)
     {
         newState = DfaState::Initial;
     }
+    else if (ch == ';')
+    {
+        newState = DfaState::SemiColon;
+        token.setType(TokenType::SemiColon);
+        tokentext += ch;
+    }
     else
     {
         cout << "sign " << ch << " can not be regonized." << endl;
@@ -183,6 +189,7 @@ vector<Token> &SimpleLexer::tokenize(string code)
         case Assignment:
         case LeftParen:
         case RightParen:
+        case SemiColon:
         case Slash:
             state = initToken(ch);
             break;

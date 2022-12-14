@@ -1,4 +1,6 @@
 #include <iostream>
+#include "TokenReader.hpp"
+#include "ASTNode.hpp"
 using namespace std;
 
 /**
@@ -9,7 +11,28 @@ using namespace std;
  * programm -> intDeclare | expressionStatement | assignmentStatement
  * intDeclare -> 'int' Id ( = additive) ';'
  * expressionStatement -> addtive ';'
+ * assignmentStatement -> Id = additive';'
  * addtive -> multiplicative ( (+ | -) multiplicative)*
  * multiplicative -> primary ( (* | /) primary)*
  * primary -> IntLiteral | Id | (additive)
  */
+class SimpleParser
+{
+private:
+    TokenReader tokens;
+    ASTNode *root;
+    ASTNode *additive();
+    ASTNode *multiplicative();
+    ASTNode *primary();
+    ASTNode *intDeclare();
+    ASTNode *expressionStatement();
+    ASTNode *assignmentStatement();
+    void dumAST(ASTNode *node, string indent);
+
+public:
+    void parse(string code); // build AST
+    void print()
+    {
+        this->dumAST(this->root, " ");
+    }
+};
