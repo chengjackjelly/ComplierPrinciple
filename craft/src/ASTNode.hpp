@@ -48,5 +48,10 @@ public:
     {
         return text;
     }
+    void reset()
+    {
+        nodeType = ASTNodeType::Undefined;
+        text = "";
+    }
 };
 #endif
