@@ -2,10 +2,10 @@
 #include <iostream>
 using namespace std;
 
-int main()
+int main(int argc, char *argv[])
 {
     SimpleParser test;
-    test.parse("1*5+2*3;");
-    test.print();
-    cout << ">" << endl;
+    // test.parse("t+4;");
+    // test.prog();
+    test.REPL(argc, argv);
 }

@@ -1,28 +1,44 @@
 #include "SimpleParser.hpp"
 #include <exception>
 #include <assert.h>
+#include <stdexcept>
+#include <string.h>
+string trim(string s)
+{
+    if (s.empty())
+    {
+        return s;
+    }
+
+    s.erase(0, s.find_first_not_of(" "));
+    s.erase(s.find_last_not_of(" ") + 1);
+    return s;
+}
 void SimpleParser::parse(string code)
 {
     SimpleLexer lexer;
     tokens = TokenReader(lexer.tokenize(code));
     root = new ASTNode(ASTNodeType::Programm, "parser");
     ASTNode *child;
-    child = intDeclare();
-    if (child->getType() == ASTNodeType::Undefined)
+    while (tokens.peek().getType() != TokenType::Undefined)
     {
-        child = expressionStatement();
-    }
-    if (child->getType() == ASTNodeType::Undefined)
-    {
-        child = assignmentStatement();
-    }
-    if (child->getType() != ASTNodeType::Undefined)
-    {
-        root->addChild(child);
-    }
-    else
-    {
-        throw "unknow statement";
+        child = intDeclare();
+        if (child->getType() == ASTNodeType::Undefined)
+        {
+            child = expressionStatement();
+        }
+        if (child->getType() == ASTNodeType::Undefined)
+        {
+            child = assignmentStatement();
+        }
+        if (child->getType() != ASTNodeType::Undefined)
+        {
+            root->addChild(child);
+        }
+        else
+        {
+            throw("unknow statement");
+        }
     }
 }
 
@@ -54,12 +70,12 @@ ASTNode *SimpleParser::intDeclare()
                     }
                     else
                     {
-                        throw "expecting a semicolon ';'";
+                        throw("expecting a semicolon ';'");
                     }
                 }
                 else
                 {
-                    throw "unknow statement after '=' ";
+                    throw("unknow statement after '=' ");
                 }
             }
             else if (tmp.getType() == TokenType::SemiColon)
@@ -68,7 +84,7 @@ ASTNode *SimpleParser::intDeclare()
             }
             else
             {
-                throw "expecting a semicolon ';'";
+                throw("expecting a semicolon ';'");
             }
         }
         else
@@ -117,7 +133,7 @@ ASTNode *SimpleParser::assignmentStatement()
             ASTNode *child = additive();
             if (child->getType() == ASTNodeType::Undefined)
             {
-                throw "expecting a expression after '='";
+                throw("expecting a expression after '='");
             }
             else
             {
@@ -135,7 +151,7 @@ ASTNode *SimpleParser::assignmentStatement()
         tmp = tokens.peek();
         if (tmp.getType() != TokenType::SemiColon)
         {
-            throw "expecting a semicolon ';'";
+            throw("expecting a semicolon ';'");
         }
         else
         {
@@ -165,7 +181,7 @@ ASTNode *SimpleParser::additive()
             }
             else
             {
-                throw "invalid additive expression";
+                throw("invalid additive expression");
             }
         }
         else
@@ -196,7 +212,7 @@ ASTNode *SimpleParser::multiplicative()
             }
             else
             {
-                throw "invalid multiplicative expression";
+                throw("invalid multiplicative expression");
             }
         }
         else
@@ -233,13 +249,13 @@ ASTNode *SimpleParser::primary()
             }
             else
             {
-                throw "expecting a right paren";
+                throw("expecting a right paren");
             }
         }
         else
         {
             // TODO *()*
-            throw "unexpecting character";
+            throw("unexpecting character");
         }
     }
     return node;
@@ -253,6 +269,143 @@ void SimpleParser::dumAST(ASTNode *node, string indent)
         for (ASTNode *child : node->getChildren())
         {
             dumAST(child, indent + "\t");
+        }
+    }
+}
+int SimpleParser::evaluate(ASTNode *node)
+{
+    ASTNodeType type = node->getType();
+    ASTNode *child1;
+    ASTNode *child2;
+    int left;
+    int right;
+    string varname;
+    int result;
+    switch (type)
+    {
+    case Programm:
+        /* code */
+        for (ASTNode *child : node->getChildren())
+        {
+            result = evaluate(child);
+        }
+        break;
+    case Additive:
+        child1 = node->getChildren()[0];
+        child2 = node->getChildren()[1];
+        left = evaluate(child1);
+        right = evaluate(child2);
+        if (node->getText() == "+")
+        {
+            result = left + right;
+        }
+        else if (node->getText() == "-")
+        {
+            result = left - right;
+        }
+        break;
+    case Multiplicative:
+        child1 = node->getChildren()[0];
+        child2 = node->getChildren()[1];
+        left = evaluate(child1);
+        right = evaluate(child2);
+        if (node->getText() == "*")
+        {
+            result = left * right;
+        }
+        else if (node->getText() == "/")
+        {
+            result = left / right;
+        }
+        break;
+    case ASTNodeType::IntLiteral:
+        result = atoi(node->getText().c_str()); // swith str to int
+        break;
+    case ASTNodeType::Identifier:
+        varname = node->getText();
+        if (variables.find(varname) == variables.end())
+        {
+            throw "undefine variables";
+        }
+        result = variables[varname];
+        break;
+    case AssignmentStmt:
+        varname = node->getText();
+        if (variables.find(varname) == variables.end())
+        {
+            throw "undefine variables";
+        }
+    case IntDeclaration:
+        child1 = node->getChildren()[0];
+        right = evaluate(child1);
+        varname = node->getText();
+        variables[varname] = right;
+        result = right;
+        break;
+    default:
+        break;
+    }
+    if (node->getType() == ASTNodeType::IntDeclaration || node->getType() == ASTNodeType::AssignmentStmt)
+    {
+        cout << node->getText() << ":" << result << endl;
+    }
+    else if (node->getType() == ASTNodeType::Programm)
+    {
+        cout << result << endl;
+    }
+    return result;
+}
+void SimpleParser::prog()
+{
+    evaluate(root);
+}
+void SimpleParser::REPL(int argc, char *argv[])
+{
+    verbose = false;
+    if (argc > 1 && strcmp(argv[1], "-v") == 0)
+    {
+        verbose = true;
+    }
+
+    cout << "Simple Script Language!" << endl;
+    string reader;
+    string scripttext;
+    cout << "\n>";
+    while (true)
+    {
+        try
+        {
+            cin >> reader;
+            string line = trim(reader);
+            if (line == "exit();")
+            {
+                cout << "Good Bye!" << endl;
+                break;
+            }
+            scripttext += line + "\n";
+            if (line[line.length() - 1] == ';')
+            {
+                parse(scripttext);
+                if (verbose)
+                {
+                    dumAST(root, " ");
+                }
+                evaluate(root);
+                cout << "\n>";
+                scripttext = "";
+            }
+        }
+        catch (const char *s)
+        {
+            cout << s << endl;
+            cout << "\n>";
+            scripttext = "";
+        }
+        catch (string s)
+        {
+            cout << s << endl;
+            cout << "\n>";
+            scripttext = "";
         }
     }
 }
