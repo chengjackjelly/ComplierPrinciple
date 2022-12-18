@@ -5,7 +5,7 @@ TEST := $(wildcard $(PROJECT)/*.cpp)
 SRC := $(wildcard $(SRCDIR)/src/*.cpp)
 override SRC := $(SRC) $(TEST) 
 
-TARGET := SimpleLexer
+TARGET := SimpleScript
 CXX := g++
 INCLUDE := -I $(SRCDIR)/src/
 CFLAGS := -std=c++11 -g
