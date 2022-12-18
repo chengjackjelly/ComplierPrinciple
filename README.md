@@ -13,7 +13,7 @@ docker-compose up -d
 
 - 进入test目录编译
 ```
-cd test
+cd craft/test
 make
 ```
 
@@ -22,5 +22,5 @@ make
 ./SimpleScript
 or
 
-./SimleScript -v #打印AST树状结构
+./SimpleScript -v #打印AST树状结构
 ```
